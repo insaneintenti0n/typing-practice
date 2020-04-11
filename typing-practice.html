@@ -3,216 +3,216 @@
     <head>
         <style>
             body { 
-				font-size: 20px; 
-				background: gray;
-				margin: 0;
-			}
+                font-size: 20px; 
+                background: gray;
+                margin: 0;
+            }
             .main { 
-				text-align: center; 
+                text-align: center; 
 			}
-			#word {
-				margin: 150px 50px;
-			}
-			.key { 
-				box-sizing: border-box;
-				line-height: 80px;
-				font-size: 40px;
-				text-align: center;
-				width: 90px;
-				color: #555;
-				cursor: pointer;
-				margin: 0 8px;
-				height: 90px;
-				border-color: #f2f2f2;
-				border-style: solid;
-				text-shadow: 0 0.5px 1px #777, 0 2px 6px #f2f2f2;
-				border-width: 1px;
-				border-radius: 10px;
-				background: -webkit-linear-gradient(top, #f9f9f9 0%, #D2D2D2 80%, #c0c0c0 100%);
-				font-family: sans-serif;
-				display: inline-block;
-				transition: box-shadow 0.3s ease, transform 0.15s ease;
-				box-shadow: 0 0 1px #888,0 1px 0 #fff, 0 6px 0 #C0C0C0, 0 8px 17px rgba(#444, 0.4), 2px 1px 4px rgba(#444, 0.25), -2px 1px 4px rgba(#444, 0.25), 0 9px 16px rgba(#444, 0.1);
-			}
-			.incorrect {
-				background: hotpink;
-			}
-			.correct {
-				background: lightgreen;
-			}
-			#score {
-				position: absolute;
-				bottom: 10px;
-				width: 100%;
-			}
+            #word {
+                margin: 150px 50px;
+            }
+            .key { 
+                box-sizing: border-box;
+                line-height: 80px;
+                font-size: 40px;
+                text-align: center;
+                width: 90px;
+                color: #555;
+                cursor: pointer;
+                margin: 0 8px;
+                height: 90px;
+                border-color: #f2f2f2;
+                border-style: solid;
+                text-shadow: 0 0.5px 1px #777, 0 2px 6px #f2f2f2;
+                border-width: 1px;
+                border-radius: 10px;
+                background: -webkit-linear-gradient(top, #f9f9f9 0%, #D2D2D2 80%, #c0c0c0 100%);
+                font-family: sans-serif;
+                display: inline-block;
+                transition: box-shadow 0.3s ease, transform 0.15s ease;
+                box-shadow: 0 0 1px #888,0 1px 0 #fff, 0 6px 0 #C0C0C0, 0 8px 17px rgba(#444, 0.4), 2px 1px 4px rgba(#444, 0.25), -2px 1px 4px rgba(#444, 0.25), 0 9px 16px rgba(#444, 0.1);
+            }
+            .incorrect {
+                background: hotpink;
+            }
+            .correct {
+                background: lightgreen;
+            }
+            #score {
+                position: absolute;
+                bottom: 10px;
+                width: 100%;
+            }
         </style>
 
         <script type="text/javascript">
-			const word_list = [
-				'and',
-				'a',
-				'the',
-				'I',
-				'me',
-				'see',
-				'you',
-				'are',
-				'we',
-				'can',
-				'is',
-				'he',
-				'she',
-				'can\'t',
-				'isn\'t',
-				'to',
-				'get',
-				'no',
-				'yes',
-				'down',
-				'go',
-				'where',
-				'my',
-				'by',
-				'here',
-				'saw',
-				'they',
-				'was',
-				'little',
-				'put',
-				'what',
-				'do',
-				'like',
-				'have',
-				'home',
-				'said',
-				'of',
-				'her',
-				'his',
-				'some',
-				'come',
-				'out',
-				'say',
-				'says',
-				'so',
-				'make',
-				'there',
-				'be',
-				'look',
-				'good',
-				'want',
-				'water',
-				'from',
-				'for',
-				'again',
-				'many',
-				'people',
-				'your',
-				'very',
-				'could',
-				'would',
-				'should',
-				'were',
-				'both',
-				'does',
-				'brother',
-				'every',
-				'mother',
-				'other',
-				'boy',
-				'woman',
-				'women',
-				'over',
-				'toward',
-				'cold',
-				'old',
-				'their',
-				'told',
-				'one',
-				'two',
-				'don\'t',
-				'too',
-				'won\'t',
-				'school',
-				'who',
-				'father',
-				'thought',
-				'', //Add new words here, between the ''
-				'',
-				'',
-				'',
-			];
+            const word_list = [
+                'and',
+                'a',
+                'the',
+                'I',
+                'me',
+                'see',
+                'you',
+                'are',
+                'we',
+                'can',
+                'is',
+                'he',
+                'she',
+                'can\'t',
+                'isn\'t',
+                'to',
+                'get',
+                'no',
+                'yes',
+                'down',
+                'go',
+                'where',
+                'my',
+                'by',
+                'here',
+                'saw',
+                'they',
+                'was',
+                'little',
+                'put',
+                'what',
+                'do',
+                'like',
+                'have',
+                'home',
+                'said',
+                'of',
+                'her',
+                'his',
+                'some',
+                'come',
+                'out',
+                'say',
+                'says',
+                'so',
+                'make',
+                'there',
+                'be',
+                'look',
+                'good',
+                'want',
+                'water',
+                'from',
+                'for',
+                'again',
+                'many',
+                'people',
+                'your',
+                'very',
+                'could',
+                'would',
+                'should',
+                'were',
+                'both',
+                'does',
+                'brother',
+                'every',
+                'mother',
+                'other',
+                'boy',
+                'woman',
+                'women',
+                'over',
+                'toward',
+                'cold',
+                'old',
+                'their',
+                'told',
+                'one',
+                'two',
+                'don\'t',
+                'too',
+                'won\'t',
+                'school',
+                'who',
+                'father',
+                'thought',
+                '', //Add new words here and below, between the ''
+                '',
+                '',
+                '',
+            ];
 
-			var total = 0;
-			var correct = 0;
-			var incorrect = false;
+            var total = 0;
+            var correct = 0;
+            var incorrect = false;
 
-			var word;
-			var displayWord = '';
-			var currentIndex = 0;
+            var word;
+            var displayWord = '';
+            var currentIndex = 0;
 
-			function getWord() {
-				// reset values
-				incorrect = false;
-				displayWord = '';
-				word = '';
-				currentIndex = 0;
-				document.getElementById('word').innerHTML = '';
+            function getWord() {
+                // reset values
+                incorrect = false;
+                displayWord = '';
+                word = '';
+                currentIndex = 0;
+                document.getElementById('word').innerHTML = '';
 
-				const number = Math.floor(Math.random() * Math.floor(word_list.length));
-				
-				function key(l, i) {
-					return `<div id='key${i}' class='key'> ${l} </div>`;
-				}
-				
-				word = word_list[number];
-				
-				// check for an empty word
-				if (word.split('').length === 0) {
-					getWord();
-					return;
-				}
+                const number = Math.floor(Math.random() * Math.floor(word_list.length));
+                
+                function key(l, i) {
+                    return `<div id='key${i}' class='key'> ${l} </div>`;
+                }
+                
+                word = word_list[number];
+                
+                // check for an empty word
+                if (word.split('').length === 0) {
+                    getWord();
+                    return;
+                }
 
-				let wordArray = word.split('');
+                let wordArray = word.split('');
 
-				wordArray.forEach(function(v,i) {
-					displayWord += key(v, i);
-				});
+                wordArray.forEach(function(v,i) {
+                    displayWord += key(v, i);
+                });
 
-				document.getElementById('word').innerHTML = displayWord;
-			}
-			
-			function onLoad() {
-				document.addEventListener('keypress', function(e) {
-					if (e.key.toLowerCase() === word.split('')[currentIndex].toLowerCase()) {
-						document.getElementById(`key${currentIndex}`).classList.add('correct');
-						currentIndex++;
+                document.getElementById('word').innerHTML = displayWord;
+            }
+            
+            function onLoad() {
+                document.addEventListener('keypress', function(e) {
+                    if (e.key.toLowerCase() === word.split('')[currentIndex].toLowerCase()) {
+                        document.getElementById(`key${currentIndex}`).classList.add('correct');
+                        currentIndex++;
 
-						if (currentIndex === word.split('').length) {
-							total++;
-							if (!incorrect) {
-								correct++;
-							}
+                        if (currentIndex === word.split('').length) {
+                            total++;
+                            if (!incorrect) {
+                                correct++;
+                            }
 
-							document.getElementById('score').innerHTML = `${correct} / ${total} (${Math.round((correct/total) * 100)}%)`;
-							setTimeout(function() {
-								getWord();
-							}, 250);
-						}
-					} else {
-						document.getElementById(`key${currentIndex}`).classList.add('incorrect');
-						incorrect = true;
-					}
-				});
+                            document.getElementById('score').innerHTML = `${correct} / ${total} (${Math.round((correct/total) * 100)}%)`;
+                            setTimeout(function() {
+                                getWord();
+                            }, 250);
+                        }
+                    } else {
+                        document.getElementById(`key${currentIndex}`).classList.add('incorrect');
+                        incorrect = true;
+                    }
+                });
 
-				getWord();
-			}
+                getWord();
+            }
         </script>
     </head>
 
     <body onload='onLoad()'>
         <div class='main'>
-			<div id='word'></div>
-			<div id='score'></div>
+            <div id='word'></div>
+            <div id='score'></div>
         </div>
     </body>
 </html>
