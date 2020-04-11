@@ -10,7 +10,7 @@
             .main { 
                 text-align: center; 
             }
-            #word {
+            .main-word {
                 margin: 150px 50px;
             }
             .key { 
@@ -55,6 +55,18 @@
                 position: absolute;
                 bottom: 10px;
                 width: 100%;
+            }
+            
+            #text {
+                text-align: center;
+                width: 500px;
+                margin-bottom: 15px;
+            }
+
+            @media screen and (min-width: 1024px) {
+                #text {
+                    display: none;
+                }
             }
         </style>
 
@@ -168,6 +180,7 @@
                 word = '';
                 currentIndex = 0;
                 document.getElementById('word').innerHTML = '';
+                document.getElementById('text').value = '';
 
                 const number = Math.floor(Math.random() * Math.floor(word_list.length));
                 
@@ -193,6 +206,8 @@
             }
             
             function onLoad() {
+                document.getElementById('text').focus();
+
                 document.addEventListener('keypress', function(e) {
                     if (e.key.toLowerCase() === word.split('')[currentIndex].toLowerCase()) {
                         document.getElementById(`key${currentIndex}`).classList.add('correct');
@@ -222,7 +237,10 @@
 
     <body onload='onLoad()'>
         <div class='main'>
-            <div id='word'></div>
+            <div class='main-word'>
+                <input type='textbox' id='text' placeholder='tap here first'/>
+                <div id='word'></div>
+            </div>
             <div id='score'></div>
         </div>
     </body>
