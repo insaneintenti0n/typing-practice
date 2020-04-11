@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body { 
+				font-size: 20px; 
+				background: gray;
+			}
+            .main { 
+				text-align: center; 
+			}
+            input { margin-left: 10px; width: 350px; height: 40px; font-size: 20px; }
+            .input-section { height: 30px; padding: 15px; }
+            button { width: 150px; height: 40px; margin-top: 40px; margin-right: 10px; }
+            label { display: inline-block; width: 140px; text-align: right; }
+            #result { margin-top: 60px; font-size: 50px; }
+            #child { display: none; }
+            .instructions { position: absolute; bottom: 20px; font-size: 15px; }
+            .note, .privacy { margin-top: 20px; }
+			#word {
+				margin: 50px;
+			}
+			.key { 
+				box-sizing: border-box;
+				line-height: 80px;
+				font-size: 22px;
+				text-align: center;
+				width: 80px;
+				color: #555;
+				cursor: pointer;
+				margin: 0 8px;
+				height: 80px;
+				border-color: #f2f2f2;
+				border-style: solid;
+				text-shadow: 0 0.5px 1px #777, 0 2px 6px #f2f2f2;
+				border-width: 1px;
+				border-radius: 10px;
+				background: -webkit-linear-gradient(top, #f9f9f9 0%, #D2D2D2 80%, #c0c0c0 100%);
+				font-family: sans-serif;
+				display: inline-block;
+				transition: box-shadow 0.3s ease, transform 0.15s ease;
+				box-shadow: 0 0 1px #888,0 1px 0 #fff, 0 6px 0 #C0C0C0, 0 8px 17px rgba(#444, 0.4), 2px 1px 4px rgba(#444, 0.25), -2px 1px 4px rgba(#444, 0.25), 0 9px 16px rgba(#444, 0.1);
+			}
+        </style>
+
+        <script type="text/javascript">
+			const word_list = [
+				'and',
+				'a',
+				'the',
+				'I',
+				'me',
+				'see',
+				'you',
+				'are',
+				'we',
+				'can',
+				'is',
+				'he',
+				'she',
+				'can\'t',
+				'isn\'t',
+				'to',
+				'get',
+				'no',
+				'yes',
+				'down',
+				'go',
+				'where',
+				'my',
+				'by',
+				'here',
+				'saw',
+				'they',
+				'was',
+				'little',
+				'put',
+				'what',
+				'do',
+				'like',
+				'have',
+				'home',
+				'said',
+				'of',
+				'her',
+				'his',
+				'some',
+				'come',
+				'out',
+				'say',
+				'says',
+				'so',
+				'make',
+				'there',
+				'be',
+				'look',
+				'good',
+				'want',
+				'water',
+				'from',
+				'for',
+				'again',
+				'many',
+				'people',
+				'your',
+				'very',
+				'could',
+				'would',
+				'should',
+				'were',
+				'both',
+				'does',
+				'brother',
+				'every',
+				'mother',
+				'other',
+				'boy',
+				'woman',
+				'women',
+				'over',
+				'toward',
+				'cold',
+				'old',
+				'their',
+				'told',
+				'one',
+				'two',
+				'don\'t',
+				'too',
+				'won\'t',
+				'school',
+				'who',
+				'father',
+				'thought'
+			];
+			
+			function onLoad() {
+				const number = Math.floor(Math.random() * Math.floor(word_list.length));
+				
+				//alert(word_list[number]);
+				
+				function key(l) {
+					return "<div class='key'>" + l + "</div>";
+				}
+				
+				let wordArray = word_list[number].split('');
+				let word = '';
+				
+				wordArray.forEach(function(v,i) {
+					word += key(v);
+				});
+				
+				document.getElementById('word').innerHTML = word;
+			}
+			
+        
+        </script>
+    </head>
+
+    <body onload='onLoad()'>
+        <div id='initial'>
+            <div class='main'>
+				<div id='word' />
+            </div>
+        </div>
+    </body>
+</html>
