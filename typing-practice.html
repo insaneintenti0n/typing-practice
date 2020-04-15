@@ -15,10 +15,11 @@
                 position: absolute;
                 top: 5px;
                 left: 5px;
-                background: transparent;
+                //background: transparent;
                 border: none;
                 color: black;
-                font-size: 25px;
+                //font-size: 25px;
+                font-size: 12px;
                 cursor: pointer;
             }
             .main-word {
@@ -154,9 +155,17 @@
             
             .settings {
                 position: absolute;
-                top: 44px;
-                left: 12px;
                 z-index: 1000;
+                border-right: 1px solid black;
+                padding-right: 15px;
+                height: 100%;
+                background: lightgray;
+                padding-left: 10px;
+                bottom: 0px;
+            }
+            
+            label {
+                line-height: 18px;
             }
             
             #settings-button:focus {
@@ -167,7 +176,7 @@
             .settings span {
                 display: flex;
                 font-size: 12px;
-                margin-bottom: 5px;
+                margin-top: 10px;
             }
             
             .hide {
@@ -196,6 +205,10 @@
             
             @media screen and (max-width: 1024px) {
                 .hands {
+                    display: none;
+                }
+                
+                #settings-button {
                     display: none;
                 }
             }
@@ -346,6 +359,7 @@
                 'The woman said that to the boy.'
             ];
 
+            // globals
             var total = 0;
             var correct = 0;
             var incorrect = false;
@@ -416,7 +430,16 @@
                     getWord();
                 }
             }
-            
+
+            function showScore(e) {
+                console.log(e);
+                if(e.checked) {
+                    document.getElementById('score').className = '';
+                } else {
+                    document.getElementById('score').className = 'hide';
+                }
+            }
+
             function showFingers(e) {
                 if(e.checked) {
                     document.getElementById('hands').className = 'hands';
@@ -462,7 +485,7 @@
                         settingsClick();
                         return;
                     }
-                    document.getElementById('timer-view').innerHTML = `${timer} seconds`; 
+                    document.getElementById('timer-view').innerHTML = `${(timer/60) >= 1 ? Math.floor(timer/60) + ' minutes' : ''} ${timer%60} seconds`; 
                     timer--; 
                     
                 }, 1000);
@@ -534,8 +557,12 @@
 
     <body onload='onLoad()'>
         <div class='main'>
-            <button id='settings-button' onClick='settingsClick()'> ⚙ </button>
+            <button id='settings-button' onClick='settingsClick()'> Settings </button>
             <div id='settings' class='settings hide'>
+                <span>
+                    <input id='show-score' checked type='checkbox' onChange='showScore(this)'/>
+                    <label for='show-score'> Show Score </label>
+                </span>
                 <span>
                     <input id='finger-position' type='checkbox' onChange='showFingers(this)'/>
                     <label for='finger-position'> Show Finger Positions </label>
@@ -544,7 +571,7 @@
                     <input id='capitals' type='checkbox' onChange='useCapitals(this)'/>
                     <label for='capitals'> Use Capital Letters </label>
                 </span>
-                <span>
+                <span title='this is in progress'>
                     <input id='sentences' type='checkbox' onChange='showSentences(this)'/>
                     <label for='sentences'> Full Sentences </label>
                 </span>
@@ -555,16 +582,16 @@
                 
                 <span>
                     <select id='timer-value' class='hide'>
+                        <option value='.5'> 30 Seconds </option>
                         <option value='1'> 1 Minute </option>
                         <option value='3'> 3 Minutes </option>
                         <option value='5'> 5 Minutes </option>
-                        <option value='10'> 10 Minutes </option>
                     </select>
                     
                     <button id='timer-go' class='hide' onClick='go()'> Go! </button>
                 </span>
                 
-                <button id='ok' onClick='settingsClick()'> ok </button> 
+                <button id='ok' onClick='settingsClick()'> Ok! </button> 
             </div>
 
             <span id='typing'>
