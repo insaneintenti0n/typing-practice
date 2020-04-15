@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <style>
             body { 
                 font-family: sans-serif;
@@ -15,11 +16,11 @@
                 position: absolute;
                 top: 5px;
                 left: 5px;
-                //background: transparent;
+                background: transparent;
                 border: none;
-                color: black;
-                //font-size: 25px;
-                font-size: 12px;
+                color: white;
+                font-size: 20px;
+                font-weight: bold;
                 cursor: pointer;
             }
             .main-word {
@@ -426,6 +427,12 @@
                 if(settings) {
                     document.getElementById('settings').className = 'settings';
                 } else {
+                    total = 0;
+                    correct = 0;
+                    incorrect = false;
+                    document.getElementById('score').className = '';
+                    document.getElementById('score').innerHTML = '';
+                    document.getElementById('typing').className = ''; 
                     document.getElementById('settings').classList.add('hide');
                     getWord();
                 }
@@ -557,7 +564,7 @@
 
     <body onload='onLoad()'>
         <div class='main'>
-            <button id='settings-button' onClick='settingsClick()'> Settings </button>
+            <button id='settings-button' onClick='settingsClick()'> ⚙ </button>
             <div id='settings' class='settings hide'>
                 <span>
                     <input id='show-score' checked type='checkbox' onChange='showScore(this)'/>
@@ -573,7 +580,7 @@
                 </span>
                 <span title='this is in progress'>
                     <input id='sentences' type='checkbox' onChange='showSentences(this)'/>
-                    <label for='sentences'> Full Sentences </label>
+                    <label for='sentences'> Full Sentences (beta) </label>
                 </span>
                 <span>
                     <input id='timer' type='checkbox' onChange='timerCheckbox(this)'/>
