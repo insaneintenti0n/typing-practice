@@ -156,6 +156,7 @@
                 position: absolute;
                 top: 44px;
                 left: 12px;
+                z-index: 1000;
             }
             
             #settings-button:focus {
@@ -166,6 +167,7 @@
             .settings span {
                 display: flex;
                 font-size: 12px;
+                margin-bottom: 5px;
             }
             
             .hide {
@@ -441,6 +443,7 @@
                 total = 0;
                 correct = 0;
                 incorrect = false;
+                document.getElementById('score').className = '';
                 document.getElementById('score').innerHTML = '';
                 settingsClick();
                 document.getElementById('typing').className = ''; 
@@ -454,7 +457,7 @@
                     if(timer === 0) {
                         clearInterval(interval);
                         interval = null;
-                        document.getElementById('score').className = 'end-score'; 
+                        document.getElementById('score').className = 'end-score';
                         document.getElementById('typing').className = 'hide'; 
                         settingsClick();
                         return;
@@ -535,7 +538,7 @@
             <div id='settings' class='settings hide'>
                 <span>
                     <input id='finger-position' type='checkbox' onChange='showFingers(this)'/>
-                    <label for='finger-position'> Show Finger Position </label>
+                    <label for='finger-position'> Show Finger Positions </label>
                 </span>
                 <span>
                     <input id='capitals' type='checkbox' onChange='useCapitals(this)'/>
