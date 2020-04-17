@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title> Typing Practice </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <style>
             body { 
+                font-family: sans-serif;
                 font-size: 20px; 
                 background: gray;
                 margin: 0;
             }
             .main { 
                 text-align: center; 
+            }
+            #settings-button {
+                position: absolute;
+                top: 5px;
+                left: 5px;
+                background: transparent;
+                border: none;
+                color: white;
+                font-size: 20px;
+                font-weight: bold;
+                cursor: pointer;
             }
             .main-word {
                 margin: 150px 0px 0px 0px;
@@ -33,6 +47,13 @@
                 display: inline-block;
                 transition: box-shadow 0.3s ease, transform 0.15s ease;
                 box-shadow: 0 0 1px #888,0 1px 0 #fff, 0 6px 0 #C0C0C0, 0 8px 17px rgba(#444, 0.4), 2px 1px 4px rgba(#444, 0.25), -2px 1px 4px rgba(#444, 0.25), 0 9px 16px rgba(#444, 0.1);
+            }
+            .sentences {
+                line-height: 38px;
+                font-size: 20px;
+                width: 40px;
+                height: 40px;
+                margin-bottom: 20px;
             }
             .incorrect {
                 position: relative;
@@ -133,6 +154,50 @@
             .hands svg {
                 margin-bottom: -70px;
             }
+            
+            .settings {
+                position: absolute;
+                z-index: 1000;
+                border-right: 1px solid black;
+                padding-right: 15px;
+                height: 100%;
+                background: lightgray;
+                padding-left: 10px;
+                bottom: 0px;
+            }
+            
+            label {
+                line-height: 18px;
+            }
+            
+            #settings-button:focus {
+                border: none;
+                outline: none;
+            }
+            
+            .settings span {
+                display: flex;
+                font-size: 12px;
+                margin-top: 10px;
+            }
+            
+            .hide {
+                display: none;
+            }
+            
+            .show {
+                display: inline;
+            }
+            
+            #timer-view {
+                margin-top: 15px;
+            }
+            
+            .end-score {
+                font-size: 50px;
+                position: relative;
+                top: 100px;
+            }
 
             @media screen and (min-width: 1024px) {
                 #text {
@@ -142,6 +207,10 @@
             
             @media screen and (max-width: 1024px) {
                 .hands {
+                    display: none;
+                }
+                
+                #settings-button {
                     display: none;
                 }
             }
@@ -175,7 +244,20 @@
                 'x': 2,
                 'y': 7,
                 'z': 1,
-                '\'': 10
+                '\'': 10,
+                ' ': 5,
+                '1': 1,
+                '2': 2,
+                '3': 3, 
+                '4': 4,
+                '5': 4,
+                '6': 7,
+                '7': 7,
+                '8': 8,
+                '9': 9,
+                '0': 0,
+                ',': 8,
+                '.': 9
             };
             
             const word_list = [
@@ -271,10 +353,23 @@
                 '',
                 '',
             ];
+            
+            const sentence_list = [
+                'She is her mother.',
+                'He is over there.',
+                'Yes, I saw the school.',
+                'The woman said that to the boy.'
+            ];
 
+            // globals
             var total = 0;
             var correct = 0;
             var incorrect = false;
+            var settings = false;
+            var capitals = false;
+            var sentences = false;
+            var timer = false;
+            var interval;
 
             var word;
             var displayWord = '';
@@ -290,13 +385,21 @@
                 document.getElementById('text').value = '';
                 document.getElementById('finger').className = 'finger-11';
 
-                const number = Math.floor(Math.random() * Math.floor(word_list.length));
-                
+                if (timer && !interval) {
+                    return;
+                }
+
                 function key(l, i) {
-                    return `<div id='key${i}' class='key'> ${l} </div>`;
+                    var classes = 'key';
+                    if (sentences) {
+                        classes += ' sentences';
+                    }
+                    return `<div id='key${i}' class='${classes}'> ${l === ' ' ? '␣' : l} </div>`;
                 }
                 
-                word = word_list[number];
+                var combined = !sentences ? word_list : sentence_list;
+                const number = Math.floor(Math.random() * Math.floor(combined.length));
+                word = combined[number];
                 
                 // check for an empty word
                 if (word.split('').length === 0) {
@@ -318,11 +421,119 @@
                 return 'finger-' + letter_lookup[letter.toLowerCase()];
             }
             
+            function settingsClick() {
+                clearInterval(interval);
+                document.getElementById('timer-view').innerHTML = ''; 
+                settings = !settings;
+                if(settings) {
+                    document.getElementById('settings').className = 'settings';
+                } else {
+                    total = 0;
+                    correct = 0;
+                    incorrect = false;
+                    document.getElementById('score').className = '';
+                    document.getElementById('score').innerHTML = '';
+                    document.getElementById('typing').className = ''; 
+                    document.getElementById('settings').classList.add('hide');
+                    getWord();
+                }
+            }
+
+            function showScore(e) {
+                console.log(e);
+                if(e.checked) {
+                    document.getElementById('score').className = '';
+                } else {
+                    document.getElementById('score').className = 'hide';
+                }
+            }
+
+            function showFingers(e) {
+                if(e.checked) {
+                    document.getElementById('hands').className = 'hands';
+                } else {
+                    document.getElementById('hands').className = 'hide';
+                }
+            }
+            
+            function timerCheckbox(e) {
+                if(e.checked) {
+                    timer = true;
+                    document.getElementById('timer-value').className = '';
+                    document.getElementById('timer-go').className = '';
+                    document.getElementById('ok').className = 'hide';
+                } else {
+                    timer = false;
+                    document.getElementById('timer-value').className = 'hide';
+                    document.getElementById('timer-go').className = 'hide';
+                    document.getElementById('ok').className = '';
+                }
+            }
+            
+            function go() {
+                total = 0;
+                correct = 0;
+                incorrect = false;
+                document.getElementById('score').className = '';
+                document.getElementById('score').innerHTML = '';
+                settingsClick();
+                document.getElementById('typing').className = ''; 
+                document.getElementById('settings').className = 'hide';
+                
+                var minutes = document.getElementById('timer-value').value;
+                var seconds = minutes * 60;
+                var timer = seconds;
+                
+                interval = setInterval(function(){ 
+                    if(timer === 0) {
+                        clearInterval(interval);
+                        interval = null;
+                        document.getElementById('score').className = 'end-score';
+                        document.getElementById('typing').className = 'hide'; 
+                        settingsClick();
+                        return;
+                    }
+                    document.getElementById('timer-view').innerHTML = `${(timer/60) >= 1 ? Math.floor(timer/60) + ' minutes' : ''} ${timer%60} seconds`; 
+                    timer--; 
+                    
+                }, 1000);
+                
+                getWord();
+            }
+            
+            function useCapitals(e) {
+                if(e.checked) {
+                    capitals = true;
+                } else {
+                    capitals = false;
+                }            
+            }
+            
+            function showSentences(e) {
+                if(e.checked) {
+                    sentences = true;
+                    getWord();
+                } else {
+                    sentences = false;
+                    getWord();
+                }
+                
+                document.getElementById('text').blur();
+            }
+            
             function onLoad() {
                 document.getElementById('text').focus();
 
                 document.addEventListener('keypress', function(e) {
-                    if (e.key.toLowerCase() === word.split('')[currentIndex].toLowerCase()) {
+                    var letterIn = e.key;
+                    var currentLetter = word.split('')[currentIndex];
+                    
+                    if (!capitals) {
+                        letterIn = letterIn.toLowerCase();
+                        currentLetter = currentLetter.toLowerCase();
+                    }
+
+                    if (letterIn === currentLetter) {
                         document.getElementById(`key${currentIndex}`).classList.add('correct');
                         currentIndex++;
 
@@ -354,15 +565,56 @@
 
     <body onload='onLoad()'>
         <div class='main'>
-            <div class='main-word'>
-                <input type='textbox' id='text' placeholder='tap here first'/>
-                <div id='word'></div>
+            <button id='settings-button' onClick='settingsClick()'> ⚙ </button>
+            <div id='settings' class='settings hide'>
+                <span>
+                    <input id='show-score' checked type='checkbox' onChange='showScore(this)'/>
+                    <label for='show-score'> Show Score </label>
+                </span>
+                <span>
+                    <input id='finger-position' type='checkbox' onChange='showFingers(this)'/>
+                    <label for='finger-position'> Show Finger Positions </label>
+                </span>
+                <span>
+                    <input id='capitals' type='checkbox' onChange='useCapitals(this)'/>
+                    <label for='capitals'> Use Capital Letters </label>
+                </span>
+                <span title='this is in progress'>
+                    <input id='sentences' type='checkbox' onChange='showSentences(this)'/>
+                    <label for='sentences'> Full Sentences (beta) </label>
+                </span>
+                <span>
+                    <input id='timer' type='checkbox' onChange='timerCheckbox(this)'/>
+                    <label for='timer'> Timer </label>
+                </span>
+                
+                <span>
+                    <select id='timer-value' class='hide'>
+                        <option value='.5'> 30 Seconds </option>
+                        <option value='1'> 1 Minute </option>
+                        <option value='3'> 3 Minutes </option>
+                        <option value='5'> 5 Minutes </option>
+                    </select>
+                    
+                    <button id='timer-go' class='hide' onClick='go()'> Go! </button>
+                </span>
+                
+                <button id='ok' onClick='settingsClick()'> Ok! </button> 
             </div>
-            
-            <div class='hands'>
-                <div id='finger'> </div>
-                <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 1280 853"><path d="M378.5 74.9c-4.9 2.3-9.9 7.4-11.9 12.3-1.7 4.1-5.8 27-7.6 42.3-2 17.4-5.8 38.2-10.4 56.4-10 39.5-10.9 45.5-12.6 77.6-1.4 25.9-3.2 34.8-8.7 42.8-3.2 4.6-8 7.7-12.1 7.7-3.8 0-8.3-4.3-11.7-11-2.4-4.8-11.7-35.8-13-43.5-.3-2.2-4.2-11.7-8.5-21-13.4-29.1-13.2-28.3-22-71.5-5.9-29.3-8.7-35.7-17.3-39.9-12.1-5.8-26.2.2-31.2 13.3-3.2 8.3-.2 26.5 10 60.7 4.3 14.3 7.6 28.9 11 48.4 3.9 22.7 6 30.1 14.7 53.5 12.3 33 12.5 38.5 1.1 43.8-4.9 2.3-7.1 2.7-13.8 2.6-6.6-.1-9.1-.6-14.5-3.1-8.2-3.7-23-12.6-43.5-26.2-13.8-9.1-17.8-12.4-29.5-24.3-16.5-16.7-24-23.2-30.5-26.6-9.6-5-19.9-2.5-25 6-3.1 5.1-2.7 14.8.7 21.8 3.6 7.3 17.9 23.4 30.3 33.9 5.4 4.7 16.6 15 24.9 23.1 8.3 8 18.5 17.3 22.6 20.5 19.4 15.4 33.5 30.7 34.5 37.5.3 1.9 1.4 5.7 2.5 8.5 4.2 11.3 9.1 30.8 10.5 42 2 14.8 8.6 48.2 12.6 63.3 3.7 14.3 9.4 28.6 16.9 42.8 3.2 6.2 7.3 14.7 8.9 19 1.7 4.4 4.9 11 7.2 14.9 12 20.3 14.4 30.6 13.5 57-.3 9.3-1.3 21.7-2.1 27.5-7.7 54-11 100-9.9 140.2l.7 25.8h177.9l-.6-2.7c-.3-1.6-.8-5.5-1.1-8.8-.3-3.3-1.4-13.9-2.5-23.5-1-9.6-2.4-22.9-3-29.5-1.4-16.3-4.6-51.3-6.6-72-.9-9.4-2-29.6-2.4-45-.5-18.2-1.6-34-3-45.3-1.2-9.5-1.9-18.4-1.6-19.7 1.3-5.2 41.7-50.2 58.6-65.2 12-10.7 19.1-19.2 26.3-31.3 4.6-7.9 8.9-13.3 17.2-21.9 6.1-6.3 13.3-12.8 16-14.6 2.8-1.8 5.7-4 6.4-4.9.7-.9 1.9-1.6 2.5-1.6.6 0 3.7-1.9 6.8-4.3 9.7-7.2 27.6-16.4 35.3-18.2 15.6-3.5 21.4-5.7 24.5-9.1 3.6-4.1 5.3-9.9 4.1-14-3.3-11.6-10-16.1-29.9-20.1-11-2.1-14.5-2.4-25.7-2-14.1.6-24.7 2.5-33.9 6.3-8.7 3.5-23.8 12.8-31.4 19.3-9.2 7.9-14.6 11.4-25.6 16.7-9.1 4.5-9.5 4.5-12.4 3-4.7-2.4-4.2-.5-7.3-28.6-1.3-11.5-.2-28.9 2.7-41 .8-3.6 2.4-12.5 3.5-19.9 2.6-17.7 17.1-65.6 24.3-80.6 3-6.1 8.7-24.4 12-38.5 3.3-13.8 7.6-26 14.1-39.5 12.3-25.3 18.1-53.1 13.1-62.5-2.4-4.5-7.3-9.8-11.1-11.7-4-2.1-12.2-2-16.9.2-8.2 3.9-20.3 24.5-29.1 49.5-4.8 13.8-8.4 21.6-16.1 35.1-2.4 4.3-12.3 23.4-22 42.5-19.1 37.7-24 45.9-31.5 52.9-5.6 5.2-7.9 5.7-7.9 1.7-.1-3.5 4.7-43.9 6.1-51.7 3-16.6 5-37.4 5.9-59.5.9-24.2 2.2-35.1 6.1-50.3 2.2-8.8 4.5-32.2 4.2-43.8-.1-5.5-.8-9-2.3-12.3-5.2-11-19.9-16.6-30.5-11.7zM869.4 105.2c-5.4 1.7-12.5 8-15.8 13.8-3 5.2-3.1 6-3.1 16.5 0 11.3 3 35 6.5 52.1 2.9 14.2 4.9 30.2 6.6 54.4 1.2 18.5 2.3 25.8 7.5 52 10.9 55.6 12.4 65.5 9.5 66.6-2.2.8-10.9-4.1-14.7-8.3-6-6.6-11.1-17.4-25.4-53.3-7.6-19-16.8-41.3-20.6-49.6-8.4-18.6-10.2-24-13.5-39.6-4.7-22.4-13-44-19.8-51.6-7-7.7-17.8-9.2-27.1-3.8-8.1 4.8-12.9 12.6-14 23.1-1.2 10.6 3.2 37.9 9 55.5 3.6 11 8.3 31.7 10.5 46.1 2.1 13.6 5 24.6 10.7 40.4 16.6 46.4 24.2 70.7 26.3 83.6 1.1 7.4 3.2 18.3 4.6 24.4 2.8 11.9 2.9 21.1.4 35-1.5 8.5-9.3 32.3-11.5 34.7-1.4 1.7-1.8 1.7-4.3.4-4.1-2.1-22-20.9-29.2-30.6-7.4-10-23-26.2-31.5-32.7-6.6-5-20.2-12.1-28-14.6-6.2-2-25.9-5.4-36.3-6.3-13.3-1.1-24.5 3.4-29.1 11.7-1.9 3.3-2.2 5.1-1.9 9.7.4 5 .9 6 4.4 9 2.1 1.8 7.6 5.6 12 8.3 8.2 5.1 13.2 9.8 33.8 32.2 5.4 5.9 10.5 10.7 11.2 10.7.7 0 1.8.9 2.4 2 .6 1.2 4.3 5.6 8.2 9.8 10.5 11.6 21.5 28.1 27.1 40.7 13.8 31.4 16.7 35.8 34.9 52.2 6.9 6.1 24.4 23.3 38.9 38.2 14.5 14.9 29.3 29.5 32.8 32.4 12.8 10.4 18.2 20.6 23.3 44.2 2.7 12.8 3 16.1 3.5 39 .5 23.6-1 82.8-2.3 94.3l-.7 5.2h93.2c81.2 0 93.1-.2 93.1-1.5 0-2.9-5.1-41.3-7.6-57.4-4.3-27.8-5.4-38.9-5.4-55.1 0-18.4 1.3-27 8.1-54.9 2.8-11.3 5.7-23.7 6.5-27.5.8-3.8 6.4-19 12.4-33.7 6-14.7 11.8-30.4 13-34.8 2.7-10.7 6.5-38.1 8.5-61.6 3.4-40.2 7.2-64.7 12.8-81 3.5-10.4 13.2-30.2 20.7-42.5 12.2-19.8 15.4-25.6 19.1-34.7 4.7-11.5 9.1-19.5 17.9-32.8 7.8-11.6 10.3-16.5 15.5-29.5 4.9-12.4 6.5-18.4 6.5-24.5-.1-8.4-5.3-16.8-12.3-19.4-4-1.5-11.1-1.4-15.2.3-9.2 3.9-20.7 19.5-32.5 44.1-11.2 23.3-18.5 33.9-40.6 58.5-20.3 22.7-23.3 25-31.9 25-4.7 0-13.9-3.1-16.7-5.7-3.1-2.8-5.1-15.4-4.4-26.7.8-11.7 4.4-42.4 5.3-44.6.3-.8.9-19.1 1.3-40.5.5-25.9 1.3-42.7 2.4-50 .9-6.7 1.6-20.4 1.8-35 .3-21.4.1-24.4-1.5-28-2.3-5-8-11.1-13-13.6-14.1-7.3-32.4 1.2-35.7 16.5-.6 2.8-1.3 20.1-1.6 38.6-.5 35.4-1.4 44.6-6 64.5-8.4 36.4-10.1 45.8-11.4 64.8-1.7 24.1-3.8 32.7-8.1 32.7-3.2 0-9.4-3.6-12.4-7.2-5.7-6.7-7.1-12.9-10.9-47.8-4.2-38-5.6-45.6-15.1-82-6.1-23.7-7.2-29.3-9.5-49-1.1-9.4-3.6-25.2-5.5-35.3-4.4-23.1-7.2-29.5-15.5-34.4-4.6-2.8-6.3-3.3-11.5-3.2-3.3.1-7.4.6-9.1 1.1z"/></svg>
-            </div>
+
+            <span id='typing'>
+                <div id='main-word' class='main-word'>
+                    <input type='textbox' id='text' placeholder='tap here first'/>
+                    <div id='word'></div>
+                </div>
+                
+                <div id='hands' class='hands hide'>
+                    <div id='finger'> </div>
+                    <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 1280 853"><path d="M378.5 74.9c-4.9 2.3-9.9 7.4-11.9 12.3-1.7 4.1-5.8 27-7.6 42.3-2 17.4-5.8 38.2-10.4 56.4-10 39.5-10.9 45.5-12.6 77.6-1.4 25.9-3.2 34.8-8.7 42.8-3.2 4.6-8 7.7-12.1 7.7-3.8 0-8.3-4.3-11.7-11-2.4-4.8-11.7-35.8-13-43.5-.3-2.2-4.2-11.7-8.5-21-13.4-29.1-13.2-28.3-22-71.5-5.9-29.3-8.7-35.7-17.3-39.9-12.1-5.8-26.2.2-31.2 13.3-3.2 8.3-.2 26.5 10 60.7 4.3 14.3 7.6 28.9 11 48.4 3.9 22.7 6 30.1 14.7 53.5 12.3 33 12.5 38.5 1.1 43.8-4.9 2.3-7.1 2.7-13.8 2.6-6.6-.1-9.1-.6-14.5-3.1-8.2-3.7-23-12.6-43.5-26.2-13.8-9.1-17.8-12.4-29.5-24.3-16.5-16.7-24-23.2-30.5-26.6-9.6-5-19.9-2.5-25 6-3.1 5.1-2.7 14.8.7 21.8 3.6 7.3 17.9 23.4 30.3 33.9 5.4 4.7 16.6 15 24.9 23.1 8.3 8 18.5 17.3 22.6 20.5 19.4 15.4 33.5 30.7 34.5 37.5.3 1.9 1.4 5.7 2.5 8.5 4.2 11.3 9.1 30.8 10.5 42 2 14.8 8.6 48.2 12.6 63.3 3.7 14.3 9.4 28.6 16.9 42.8 3.2 6.2 7.3 14.7 8.9 19 1.7 4.4 4.9 11 7.2 14.9 12 20.3 14.4 30.6 13.5 57-.3 9.3-1.3 21.7-2.1 27.5-7.7 54-11 100-9.9 140.2l.7 25.8h177.9l-.6-2.7c-.3-1.6-.8-5.5-1.1-8.8-.3-3.3-1.4-13.9-2.5-23.5-1-9.6-2.4-22.9-3-29.5-1.4-16.3-4.6-51.3-6.6-72-.9-9.4-2-29.6-2.4-45-.5-18.2-1.6-34-3-45.3-1.2-9.5-1.9-18.4-1.6-19.7 1.3-5.2 41.7-50.2 58.6-65.2 12-10.7 19.1-19.2 26.3-31.3 4.6-7.9 8.9-13.3 17.2-21.9 6.1-6.3 13.3-12.8 16-14.6 2.8-1.8 5.7-4 6.4-4.9.7-.9 1.9-1.6 2.5-1.6.6 0 3.7-1.9 6.8-4.3 9.7-7.2 27.6-16.4 35.3-18.2 15.6-3.5 21.4-5.7 24.5-9.1 3.6-4.1 5.3-9.9 4.1-14-3.3-11.6-10-16.1-29.9-20.1-11-2.1-14.5-2.4-25.7-2-14.1.6-24.7 2.5-33.9 6.3-8.7 3.5-23.8 12.8-31.4 19.3-9.2 7.9-14.6 11.4-25.6 16.7-9.1 4.5-9.5 4.5-12.4 3-4.7-2.4-4.2-.5-7.3-28.6-1.3-11.5-.2-28.9 2.7-41 .8-3.6 2.4-12.5 3.5-19.9 2.6-17.7 17.1-65.6 24.3-80.6 3-6.1 8.7-24.4 12-38.5 3.3-13.8 7.6-26 14.1-39.5 12.3-25.3 18.1-53.1 13.1-62.5-2.4-4.5-7.3-9.8-11.1-11.7-4-2.1-12.2-2-16.9.2-8.2 3.9-20.3 24.5-29.1 49.5-4.8 13.8-8.4 21.6-16.1 35.1-2.4 4.3-12.3 23.4-22 42.5-19.1 37.7-24 45.9-31.5 52.9-5.6 5.2-7.9 5.7-7.9 1.7-.1-3.5 4.7-43.9 6.1-51.7 3-16.6 5-37.4 5.9-59.5.9-24.2 2.2-35.1 6.1-50.3 2.2-8.8 4.5-32.2 4.2-43.8-.1-5.5-.8-9-2.3-12.3-5.2-11-19.9-16.6-30.5-11.7zM869.4 105.2c-5.4 1.7-12.5 8-15.8 13.8-3 5.2-3.1 6-3.1 16.5 0 11.3 3 35 6.5 52.1 2.9 14.2 4.9 30.2 6.6 54.4 1.2 18.5 2.3 25.8 7.5 52 10.9 55.6 12.4 65.5 9.5 66.6-2.2.8-10.9-4.1-14.7-8.3-6-6.6-11.1-17.4-25.4-53.3-7.6-19-16.8-41.3-20.6-49.6-8.4-18.6-10.2-24-13.5-39.6-4.7-22.4-13-44-19.8-51.6-7-7.7-17.8-9.2-27.1-3.8-8.1 4.8-12.9 12.6-14 23.1-1.2 10.6 3.2 37.9 9 55.5 3.6 11 8.3 31.7 10.5 46.1 2.1 13.6 5 24.6 10.7 40.4 16.6 46.4 24.2 70.7 26.3 83.6 1.1 7.4 3.2 18.3 4.6 24.4 2.8 11.9 2.9 21.1.4 35-1.5 8.5-9.3 32.3-11.5 34.7-1.4 1.7-1.8 1.7-4.3.4-4.1-2.1-22-20.9-29.2-30.6-7.4-10-23-26.2-31.5-32.7-6.6-5-20.2-12.1-28-14.6-6.2-2-25.9-5.4-36.3-6.3-13.3-1.1-24.5 3.4-29.1 11.7-1.9 3.3-2.2 5.1-1.9 9.7.4 5 .9 6 4.4 9 2.1 1.8 7.6 5.6 12 8.3 8.2 5.1 13.2 9.8 33.8 32.2 5.4 5.9 10.5 10.7 11.2 10.7.7 0 1.8.9 2.4 2 .6 1.2 4.3 5.6 8.2 9.8 10.5 11.6 21.5 28.1 27.1 40.7 13.8 31.4 16.7 35.8 34.9 52.2 6.9 6.1 24.4 23.3 38.9 38.2 14.5 14.9 29.3 29.5 32.8 32.4 12.8 10.4 18.2 20.6 23.3 44.2 2.7 12.8 3 16.1 3.5 39 .5 23.6-1 82.8-2.3 94.3l-.7 5.2h93.2c81.2 0 93.1-.2 93.1-1.5 0-2.9-5.1-41.3-7.6-57.4-4.3-27.8-5.4-38.9-5.4-55.1 0-18.4 1.3-27 8.1-54.9 2.8-11.3 5.7-23.7 6.5-27.5.8-3.8 6.4-19 12.4-33.7 6-14.7 11.8-30.4 13-34.8 2.7-10.7 6.5-38.1 8.5-61.6 3.4-40.2 7.2-64.7 12.8-81 3.5-10.4 13.2-30.2 20.7-42.5 12.2-19.8 15.4-25.6 19.1-34.7 4.7-11.5 9.1-19.5 17.9-32.8 7.8-11.6 10.3-16.5 15.5-29.5 4.9-12.4 6.5-18.4 6.5-24.5-.1-8.4-5.3-16.8-12.3-19.4-4-1.5-11.1-1.4-15.2.3-9.2 3.9-20.7 19.5-32.5 44.1-11.2 23.3-18.5 33.9-40.6 58.5-20.3 22.7-23.3 25-31.9 25-4.7 0-13.9-3.1-16.7-5.7-3.1-2.8-5.1-15.4-4.4-26.7.8-11.7 4.4-42.4 5.3-44.6.3-.8.9-19.1 1.3-40.5.5-25.9 1.3-42.7 2.4-50 .9-6.7 1.6-20.4 1.8-35 .3-21.4.1-24.4-1.5-28-2.3-5-8-11.1-13-13.6-14.1-7.3-32.4 1.2-35.7 16.5-.6 2.8-1.3 20.1-1.6 38.6-.5 35.4-1.4 44.6-6 64.5-8.4 36.4-10.1 45.8-11.4 64.8-1.7 24.1-3.8 32.7-8.1 32.7-3.2 0-9.4-3.6-12.4-7.2-5.7-6.7-7.1-12.9-10.9-47.8-4.2-38-5.6-45.6-15.1-82-6.1-23.7-7.2-29.3-9.5-49-1.1-9.4-3.6-25.2-5.5-35.3-4.4-23.1-7.2-29.5-15.5-34.4-4.6-2.8-6.3-3.3-11.5-3.2-3.3.1-7.4.6-9.1 1.1z"/></svg>
+                </div>
+                
+                <div id='timer-view'></div>
+            </span>
             
             <div id='score'></div>
             
