@@ -255,7 +255,7 @@
                 '7': 7,
                 '8': 8,
                 '9': 9,
-                '0': 0,
+                '0': 10,
                 ',': 8,
                 '.': 9
             };
@@ -354,6 +354,24 @@
                 '',
             ];
             
+            const number_list = [
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+                '6',
+                '7',
+                '8',
+                '9',
+                '10',
+                '11',
+                '12',
+                '13',
+                '14',
+                '15',
+            ];
+            
             const sentence_list = [
                 'She is her mother.',
                 'He is over there.',
@@ -368,6 +386,7 @@
             var settings = false;
             var capitals = false;
             var sentences = false;
+            var numbers = false;
             var timer = false;
             var interval;
 
@@ -398,6 +417,11 @@
                 }
                 
                 var combined = !sentences ? word_list : sentence_list;
+
+                if (numbers) {
+                    combined = combined.concat(number_list);
+                }
+
                 const number = Math.floor(Math.random() * Math.floor(combined.length));
                 word = combined[number];
                 
@@ -509,6 +533,14 @@
                 }            
             }
             
+            function showNumbers(e) {
+                if(e.checked) {
+                    numbers = true;
+                } else {
+                    numbers = false;
+                }            
+            }
+            
             function showSentences(e) {
                 if(e.checked) {
                     sentences = true;
@@ -574,6 +606,10 @@
                 <span>
                     <input id='finger-position' type='checkbox' onChange='showFingers(this)'/>
                     <label for='finger-position'> Show Finger Positions </label>
+                </span>
+                <span>
+                    <input id='numbers' type='checkbox' onChange='showNumbers(this)'/>
+                    <label for='numbers'> Include Numbers </label>
                 </span>
                 <span>
                     <input id='capitals' type='checkbox' onChange='useCapitals(this)'/>
